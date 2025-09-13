@@ -96,7 +96,7 @@ glassMask = np.uint8(glassMask / 255)
 
 
 faceWithGlasses = faceImage.copy()
-x, y = 111, 145  # adjust these values for position
+x, y = 111, 145  
 h, w = glassBGR.shape[:2]
 
 roi = faceWithGlasses[y:y+h, x:x+w]
