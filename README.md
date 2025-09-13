@@ -62,20 +62,14 @@ plt.subplot(122);plt.imshow(glassMask1,cmap='gray');plt.title('Sunglass Alpha ch
 ```python
 
 faceImage = cv2.imread("Photo.jpg")
+
 glassPNG = cv2.imread("glass.png", -1)
-
-
 glassBGR = glassPNG[:, :, :3]
-
-
-glassBGR = cv2.resize(glassBGR, (180, 75))  # (width, height)
-
+glassBGR = cv2.resize(glassBGR, (180, 75)) 
 
 faceWithGlassesNaive = faceImage.copy()
-
-y, x = 150, 110   # top-left corner
+y, x = 150, 110  
 h, w = glassBGR.shape[:2]
-
 faceWithGlassesNaive[y:y+h, x:x+w] = glassBGR
 
 plt.imshow(faceWithGlassesNaive[..., ::-1])
@@ -91,40 +85,25 @@ print("Face shape:", faceImage.shape)
 glassPNG = cv2.imread("glass.png", -1)   
 print("Original Glasses shape:", glassPNG.shape)
 
-
 glassPNG = cv2.resize(glassPNG, (180, 75))  
 print("Resized Glasses shape:", glassPNG.shape)
-
 
 glassBGR = glassPNG[:, :, :3]
 glassMask1 = glassPNG[:, :, 3]
 
-
 glassMask = cv2.merge((glassMask1, glassMask1, glassMask1))
-
-
 glassMask = np.uint8(glassMask / 255)
 
 
 faceWithGlasses = faceImage.copy()
-
-
 x, y = 111, 145  # adjust these values for position
 h, w = glassBGR.shape[:2]
 
-
 roi = faceWithGlasses[y:y+h, x:x+w]
-
-
 maskedEye   = cv2.multiply(roi, (1 - glassMask))  
 maskedGlass = cv2.multiply(glassBGR, glassMask)    
-
-
 roiFinal = cv2.add(maskedEye, maskedGlass)
-
-
 faceWithGlasses[y:y+h, x:x+w] = roiFinal
-
 
 plt.figure(figsize=[15,10])
 plt.subplot(121); plt.imshow(faceImage[:,:,::-1]); plt.title("Original")
