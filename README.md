@@ -60,30 +60,24 @@ plt.subplot(122);plt.imshow(glassMask1,cmap='gray');plt.title('Sunglass Alpha ch
 
 
 ```python
-import cv2
-import matplotlib.pyplot as plt
 
-# Load images
 faceImage = cv2.imread("Photo.jpg")
 glassPNG = cv2.imread("glass.png", -1)
 
-# Extract BGR channels (ignore alpha for naive placement)
+
 glassBGR = glassPNG[:, :, :3]
 
-# Resize glasses to fit
+
 glassBGR = cv2.resize(glassBGR, (180, 75))  # (width, height)
 
-# Copy face
+
 faceWithGlassesNaive = faceImage.copy()
 
-# Define region coordinates properly (y:y+h, x:x+w)
 y, x = 150, 110   # top-left corner
 h, w = glassBGR.shape[:2]
 
-# Replace ROI with glasses
 faceWithGlassesNaive[y:y+h, x:x+w] = glassBGR
 
-# Show result
 plt.imshow(faceWithGlassesNaive[..., ::-1])
 plt.title("Naive Overlay (No Mask)")
 plt.show()
@@ -91,53 +85,47 @@ plt.show()
 <img width="454" height="547" alt="image" src="https://github.com/user-attachments/assets/cecdbb04-f9aa-45c6-8595-c13309f1806d" />
 
 ```python
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
-
-# Load your face image
 faceImage = cv2.imread("Photo.jpg")
 print("Face shape:", faceImage.shape)
 
-# Load sunglasses PNG with alpha channel
-glassPNG = cv2.imread("glass.png", -1)   # must have 4 channels
+glassPNG = cv2.imread("glass.png", -1)   
 print("Original Glasses shape:", glassPNG.shape)
 
-# Resize sunglasses (adjust size as needed)
-glassPNG = cv2.resize(glassPNG, (180, 75))  # width=250, height=80
+
+glassPNG = cv2.resize(glassPNG, (180, 75))  
 print("Resized Glasses shape:", glassPNG.shape)
 
-# Separate BGR and Alpha
+
 glassBGR = glassPNG[:, :, :3]
 glassMask1 = glassPNG[:, :, 3]
 
-# Convert alpha channel (1-channel) to 3 channels
+
 glassMask = cv2.merge((glassMask1, glassMask1, glassMask1))
 
-# Normalize mask (0 or 1 values)
+
 glassMask = np.uint8(glassMask / 255)
 
-# Copy face image
+
 faceWithGlasses = faceImage.copy()
 
-# Define placement (top-left corner of sunglasses)
+
 x, y = 111, 145  # adjust these values for position
 h, w = glassBGR.shape[:2]
 
-# Extract Region of Interest (ROI) from the face
+
 roi = faceWithGlasses[y:y+h, x:x+w]
 
-# Masked regions
-maskedEye   = cv2.multiply(roi, (1 - glassMask))   # remove sunglass area from ROI
-maskedGlass = cv2.multiply(glassBGR, glassMask)    # keep sunglass area
 
-# Combine both
+maskedEye   = cv2.multiply(roi, (1 - glassMask))  
+maskedGlass = cv2.multiply(glassBGR, glassMask)    
+
+
 roiFinal = cv2.add(maskedEye, maskedGlass)
 
-# Place combined result back on face
+
 faceWithGlasses[y:y+h, x:x+w] = roiFinal
 
-# Show results
+
 plt.figure(figsize=[15,10])
 plt.subplot(121); plt.imshow(faceImage[:,:,::-1]); plt.title("Original")
 plt.subplot(122); plt.imshow(faceWithGlasses[:,:,::-1]); plt.title("With Sunglasses (Masked)")
